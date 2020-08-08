@@ -37,11 +37,11 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	uid, _ := c.Cookie("openid")
+	uid, _ := c.Get("openid")
 	msg := model.SimpleMessage{
 		Id:      uuid.New().String(),
 		Content: form.Content,
-		UserId:  uid,
+		UserId:  uid.(string),
 	}
 	err := msg.Add()
 	if err != nil {
