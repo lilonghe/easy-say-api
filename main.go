@@ -32,6 +32,7 @@ func setupRouter() *gin.Engine {
 		authorized.GET("/message/:id", message.Get)
 		authorized.GET("/message", message.GetList)
 		authorized.POST("/message", message.Add)
+		authorized.POST("/message/like", message.Like)
 	}
 
 	return r

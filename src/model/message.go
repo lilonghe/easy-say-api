@@ -15,6 +15,8 @@ type Message struct {
 	UpdatedAt    time.Time `json:"updated_at" xorm:"updated"`
 
 	User User `json:"user" xorm:"extends"`
+
+	Liked bool `json:"liked" sql:"-"`
 }
 
 type SimpleMessage struct {
@@ -42,6 +44,7 @@ func (m Message) GetList(limit int, offset int) ([]Message, error) {
 		OrderBy("messages.created_at desc").
 		Limit(limit, offset).
 		Find(&list)
+
 	return list, err
 }
 
