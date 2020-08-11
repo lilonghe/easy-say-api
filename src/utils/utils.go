@@ -3,6 +3,8 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
+	"github.com/gin-gonic/gin"
 )
 
 func GetMD5Hash(text string) string {
@@ -35,4 +37,14 @@ func FindIndexInArray(val string, arr []string) int {
 		}
 	}
 	return -1
+}
+
+func ContextError(c *gin.Context, message string, err error) {
+	fmt.Println(err)
+	c.JSON(200, gin.H{"err": message})
+}
+
+type PageResponse struct {
+	Total int         `json:"total"`
+	List  interface{} `json:"list"`
 }

@@ -15,6 +15,7 @@ func setupRouter() *gin.Engine {
 	r.Use(cors.New(cors.Config{
 		AllowMethods:     []string{"OPTION", "PUT", "PATCH", "GET", "POST", "DELETE"},
 		AllowCredentials: true,
+		AllowHeaders:     []string{"content-type"},
 		AllowOriginFunc: func(origin string) bool {
 			return true
 			//return origin == "http://127.0.0.1"
@@ -29,10 +30,12 @@ func setupRouter() *gin.Engine {
 	authorized.Use(AuthRequired())
 	{
 		authorized.GET("/user", user.UserInfo)
-		authorized.GET("/message/:id", message.Get)
 		authorized.GET("/message", message.GetList)
 		authorized.POST("/message", message.Add)
 		authorized.POST("/message/like", message.Like)
+		authorized.GET("/message/comment", message.GetCommentListByMessage)
+		authorized.POST("/message/comment", message.AddComment)
+		authorized.DELETE("/message/comment", message.DelComment)
 	}
 
 	return r

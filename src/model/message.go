@@ -10,9 +10,10 @@ type Message struct {
 	Content      string    `json:"content"`
 	LikeCount    int       `json:"like_count"`
 	CommentCount int       `json:"comment_count"`
-	UserId       string    `json:"user_id"`
+	UserId       string    `json:"-"`
 	CreatedAt    time.Time `json:"created_at" xorm:"created"`
 	UpdatedAt    time.Time `json:"updated_at" xorm:"updated"`
+	IsEnable     bool      `json:"is_enable"`
 
 	User User `json:"user" xorm:"extends"`
 
@@ -40,6 +41,7 @@ func (m *Message) Get() error {
 func (m Message) GetList(limit int, offset int) ([]Message, error) {
 	list := make([]Message, 0)
 	err := config.Global.DB.
+		Where("messages.is_enable=true").
 		Join("left", "users", "users.id=messages.user_id").
 		OrderBy("messages.created_at desc").
 		Limit(limit, offset).

@@ -73,16 +73,16 @@ func Add(c *gin.Context) {
 func Like(c *gin.Context) {
 	var form viewModel.LikeMessageForm
 	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(200, gin.H{"err": "参数错误"})
+		utils.ContextError(c, "参数错误", err)
 		return
 	}
 
 	uid, _ := c.Get("openid")
 	// 取消点赞
-	if form.Unlike {
+	if *form.Unlike {
 		obj := model.UserFavoriteMessage{
 			UserId:    uid.(string),
-			MessageId: form.MessageId,
+			MessageId: *form.MessageId,
 			IsEnable:  false,
 		}
 		err := obj.Del()
@@ -96,7 +96,7 @@ func Like(c *gin.Context) {
 
 	obj := model.UserFavoriteMessage{
 		UserId:    uid.(string),
-		MessageId: form.MessageId,
+		MessageId: *form.MessageId,
 		IsEnable:  true,
 	}
 
@@ -116,6 +116,87 @@ func Like(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(200, gin.H{"err": "获取失败"})
+		return
+	}
+	c.JSON(200, gin.H{})
+}
+
+func GetCommentListByMessage(c *gin.Context) {
+	messageId := c.Query("message_id")
+	comments, err := model.Comment{}.GetListByMessage(messageId)
+	if err != nil {
+		c.JSON(200, gin.H{"err": "获取失败"})
+		return
+	}
+
+	c.JSON(200, gin.H{"data": utils.PageResponse{
+		Total: len(comments),
+		List:  comments,
+	}})
+}
+
+func AddComment(c *gin.Context) {
+	var form viewModel.MessageCommentForm
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(200, gin.H{"err": "参数错误"})
+		return
+	}
+	uid, _ := c.Get("openid")
+	obj := model.SimpleComment{
+		Id:        uuid.New().String(),
+		UserId:    uid.(string),
+		MessageId: form.MessageId,
+		Content:   form.Content,
+		IsEnable:  true,
+	}
+
+	if len(form.Content) > 140 {
+		utils.ContextError(c, "最多140个文字", nil)
+		return
+	}
+
+	// 检查 message 是否有效
+	msg := model.Message{Id: form.MessageId}
+	err := msg.Get()
+	if err != nil {
+		utils.ContextError(c, "执行失败", err)
+		return
+	}
+
+	err = obj.Add()
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(200, gin.H{"err": "添加失败"})
+		return
+	}
+	c.JSON(200, gin.H{"data": obj})
+}
+
+func DelComment(c *gin.Context) {
+	var form viewModel.DelMessageCommentForm
+	if err := c.ShouldBindJSON(&form); err != nil {
+		c.JSON(200, gin.H{"err": "参数错误"})
+		return
+	}
+	uid, _ := c.Get("openid")
+	obj := model.Comment{
+		Id:     form.CommentId,
+		UserId: uid.(string),
+	}
+	err := obj.Get()
+	if err != nil {
+		c.JSON(200, gin.H{"err": "执行失败"})
+		return
+	}
+	if obj.MessageId == "" {
+		c.JSON(200, gin.H{"err": "无效数据"})
+		return
+	}
+
+	obj.IsEnable = false
+	err = obj.Del()
+	if err != nil {
+		c.JSON(200, gin.H{"err": "删除失败"})
 		return
 	}
 	c.JSON(200, gin.H{})

@@ -1,12 +1,17 @@
 package model
 
-import "github.com/easy-say-api/src/config"
+import (
+	"github.com/easy-say-api/src/config"
+	"time"
+)
 
 type UserFavoriteMessage struct {
-	Id        int    `json:"id"`
-	UserId    string `json:"user_id"`
-	MessageId string `json:"message_id"`
-	IsEnable  bool   `json:"is_enable"`
+	Id        int       `json:"id"`
+	UserId    string    `json:"user_id"`
+	MessageId string    `json:"message_id"`
+	CreatedAt time.Time `json:"created_at" xorm:"created"`
+	UpdatedAt time.Time `json:"updated_at" xorm:"updated"`
+	IsEnable  bool      `json:"is_enable"`
 }
 
 func (u UserFavoriteMessage) TableName() string { return "user_favorite_message" }
