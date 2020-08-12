@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/easy-say-api/src/config"
 	"github.com/easy-say-api/src/router/message"
+	"github.com/easy-say-api/src/router/oauth"
 	"github.com/easy-say-api/src/router/user"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,7 @@ func setupRouter() *gin.Engine {
 	r.Use(ginsession.New())
 
 	r.POST("/api/login", user.Login)
+	r.GET("/api/oauth/github", oauth.GithubAuth)
 
 	authorized := r.Group("/api")
 	authorized.Use(AuthRequired())

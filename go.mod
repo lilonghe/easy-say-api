@@ -18,10 +18,13 @@ require (
 	github.com/go-session/session v3.1.2+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.1.1
+	github.com/parnurzeal/gorequest v0.2.16
+	github.com/spf13/viper v1.7.1
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/tealeg/xlsx v1.0.5 // indirect
 	github.com/xormplus/builder v0.0.0-20200331055651-240ff40009be // indirect
 	github.com/xormplus/xorm v0.0.0-20200731130200-6811f3bde592
 	gopkg.in/flosch/pongo2.v3 v3.0.0-20141028000813-5e81b817a0c4 // indirect
+	moul.io/http2curl v1.0.0 // indirect
 	xorm.io/xorm v1.0.3
 )
