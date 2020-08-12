@@ -15,8 +15,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	hashPass := utils.GetMD5Hash(utils.GetMD5Hash(form.Password))
-	user := model.User{Username: form.Username, Password: hashPass}
+	hashPass := utils.GetMD5Hash(utils.GetMD5Hash(*form.Password))
+	user := model.User{Username: *form.Username, Password: hashPass}
 	if err := user.Login(); err != nil {
 		c.JSON(200, gin.H{"err": "登录失败"})
 		return
